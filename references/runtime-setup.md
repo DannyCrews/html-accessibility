@@ -20,7 +20,11 @@ State which runtime you used in the report.
 ## Runtime A — Playwright MCP (preferred)
 
 Repeatable, headless-capable, main-world eval, element screenshots by selector,
-and `bypassCSP`. Add to `claude_desktop_config.json` and restart Claude Desktop:
+and `bypassCSP`. The most reliable way to add it is to **hand-edit
+`claude_desktop_config.json` directly** (on macOS:
+`~/Library/Application Support/Claude/claude_desktop_config.json`) — merge the
+`playwright` entry into any existing `mcpServers`, save, and fully quit and
+reopen Claude Desktop:
 
 ```json
 {
@@ -54,11 +58,26 @@ Notes and gotchas:
 promise, so one call does inject+run. Pass a wrapper that inlines the
 declarations from `scripts/axe-run.js` and returns `await a11yAudit()`.
 
+On a large or content-heavy page the full result can exceed the MCP's inline
+output limit. Pass a `filename` to `browser_evaluate` so it writes the JSON to
+disk, then parse the file (e.g. with a short Python pass) instead of returning it
+inline. Do the same for a full heading outline or image inventory. Keeping the
+raw JSON on disk also makes the final report trivially verifiable against it.
+
 ### Render-and-look (Playwright)
 
 `browser_take_screenshot` with `target` set to a `needsLook` selector captures
 just that element (Playwright scrolls it into view). Save under a renders folder,
 then Read the PNG to judge alt text / contrast.
+
+If an element capture comes back **blank**, the image is almost certainly
+lazy-loaded (its live `src` is a placeholder until it scrolls into view) or is a
+form upload with no stable on-page `src`. Read the real URL from the DOM
+(`data-src`/`data-orig-file`/`srcset`, the wrapping link's `href`, or a
+`?gf-download=` form URL) and open that URL directly, then screenshot — the same
+"images by source, not by element" move the SKILL describes. Grabbing each
+image's nearby text (caption, heading, adjacent paragraph) at the same time gives
+the context needed to write good alt.
 
 ## Runtime B — AppleScript "Control Chrome" (fallback)
 

@@ -105,9 +105,14 @@ parenthetically, not as the headline.
 **Route findings by who owns the fix.** Separate recurring theme/template issues
 (one fix cascades across every page — owned by the site/theme team) from per-page
 content issues (alt text, in-content headings/links/tables — owned by the content
-author). For a content-author-facing report (e.g. a site-launch review), *suppress*
-the theme issues so the author sees only their handful of fixable items, not
-thousands of template occurrences they can't touch. Routing heuristics (frequency
+author). Watch for a third case — **generated content**: markup inside the content
+region but produced by a form/plugin/CMS template (e.g. submission forms that emit
+heading-styled entries and un-alt'd image uploads). Location says "content," but
+the fix is in code, so it routes to the developer, not the editor; don't hand an
+editor hundreds of items they didn't author. For a content-author-facing report
+(e.g. a site-launch review), *suppress* the theme issues so the author sees only
+their handful of fixable items, not thousands of template occurrences they can't
+touch. Routing heuristics (frequency
 oracle + single-page location/issue-class) and the audience-scoped report shapes:
 `references/audit-interpretation.md`.
 
