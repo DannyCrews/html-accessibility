@@ -36,8 +36,28 @@ const AXE_URL = 'https://cdn.jsdelivr.net/npm/axe-core@4.12.1/axe.min.js';
 // eyes by definition and is queued regardless of this list.
 const LOOK_RULES = new Set([
   'image-alt', 'input-image-alt', 'area-alt', 'object-alt',
-  'color-contrast', 'link-name', 'button-name', 'label'
+  'color-contrast', 'link-name', 'button-name', 'label',
+  'target-size' // small/overlapping targets + spacing exceptions want a look
 ]);
+
+// Rules axe ships DISABLED by default that we deliberately turn on.
+//
+// axe 4.12.1 is a WCAG 2.0/2.1 engine. The ONLY rule for a net-new 2.2
+// criterion is `target-size` (SC 2.5.8 Target Size (Minimum), AA), and it
+// ships `enabled: false`. We enable it to inch coverage toward 2.2 and route
+// its output through the judgment queue (see LOOK_RULES). This does NOT make
+// the skill a 2.2 checker: the other net-new 2.2 AA criteria — 2.4.11 Focus
+// Not Obscured, 2.5.7 Dragging Movements, 3.2.6 Consistent Help, 3.3.7
+// Redundant Entry, 3.3.8 Accessible Authentication — have NO axe rule at all.
+// Reports must state that 2.2 coverage is target-size only.
+//
+// Deliberately left OFF (the other default-disabled A/AA rules in 4.12.1):
+//   - `audio-caption` (1.2.1): not reliably automatable; yields manual-only
+//     items a human AT pass covers better.
+//   - `aria-roledescription` (4.1.2): niche; low yield on content-authored pages.
+// And note: `label-content-name-mismatch` (2.5.3 Label in Name) is ALREADY
+// enabled by default in 4.12.1 — no action needed (verified 2026-07).
+const ENABLE_RULES = ['target-size'];
 
 // Ensure axe is available in the CURRENT JS world. fetch+eval works in both the
 // main world (Playwright) and an isolated world (extension). Returns the version.
@@ -91,15 +111,20 @@ function summarizeAxe(results, opts) {
 }
 
 // Load axe (if needed), run the full ruleset against the document, and shape it.
+// ENABLE_RULES turns on axe's default-disabled rules we've opted into (see above);
+// all other rules run per their defaults.
 async function a11yAudit(opts) {
   await ensureAxe();
+  const ruleConfig = {};
+  for (const id of ENABLE_RULES) ruleConfig[id] = { enabled: true };
   const results = await axe.run(document, {
-    resultTypes: ['violations', 'incomplete', 'passes', 'inapplicable']
+    resultTypes: ['violations', 'incomplete', 'passes', 'inapplicable'],
+    rules: ruleConfig
   });
   return summarizeAxe(results, opts);
 }
 
 // Node/testing export (ignored in the browser).
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { AXE_URL, LOOK_RULES, ensureAxe, summarizeAxe, a11yAudit };
+  module.exports = { AXE_URL, LOOK_RULES, ENABLE_RULES, ensureAxe, summarizeAxe, a11yAudit };
 }

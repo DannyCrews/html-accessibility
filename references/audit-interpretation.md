@@ -46,6 +46,17 @@ worth fixing, but do **not** invent a criterion for them and do **not** let them
 sink a conformance statement. `axe-run.js` exposes this: a finding with an empty
 `wcag` array is best-practice.
 
+## WCAG version coverage — state it honestly
+
+axe 4.12.1 is a WCAG **2.0/2.1** engine. `axe-run.js` enables `target-size`
+(SC 2.5.8) — the one net-new 2.2 rule axe ships, disabled by default — and routes
+it through the judgment queue. No other net-new 2.2 AA criterion has an axe rule,
+so the audit does **not** cover 2.4.11 Focus Not Obscured, 2.5.7 Dragging, 3.2.6
+Consistent Help, 3.3.7 Redundant Entry, or 3.3.8 Accessible Authentication. When a
+Siteimprove scan (which tests 2.2) is the point of comparison, expect it to report
+whole categories axe cannot — that gap is structural, not a bug. Never imply 2.2
+conformance.
+
 ## `incomplete` is where the model earns its keep
 
 Every `incomplete` node needs a human/model call. The two you'll see most:
@@ -69,11 +80,54 @@ automated report lies.
 4. **Best-practice structure** — landmarks, single `<main>`, one `h1`,
    heading order. Usually a template fix.
 
-Then ask the owner the highest-leverage question: **is this in a CMS
-theme/template or in one-off content?** Template/theme fixes cascade across every
-page that uses them; page-content fixes don't. (This is the web version of the
-PDF skill's "fix at the source" instinct.) On BU WordPress sites many findings
-live in the theme or a Gutenberg block, so one fix clears the issue site-wide.
+Then route by ownership (below) — the single highest-leverage lens.
+
+## Route by ownership: theme/template vs content
+
+The most useful question about any finding is **who can fix it**, because that
+sets both leverage and audience:
+
+- **Theme/template issues** recur on (nearly) every page: skip-link missing, no
+  `<main>`/landmarks, no `h1`, invalid roles in global nav, chrome contrast. One
+  fix in the theme or a shared block cascades site-wide. Owner: the site/theme
+  team (at BU, the department team + MarCom). This is the web version of the PDF
+  skill's "fix at the source" instinct.
+- **Content issues** are per-page and authored: alt text, in-content heading
+  order, link text, table headers, form labels, body-copy contrast. Owner: the
+  content author/editor.
+
+**How to classify:**
+
+- **With a Siteimprove "Issues" export (best signal):** the per-issue *page
+  count* is a ready-made oracle — an issue on ~all pages of a site is
+  theme-level; an issue on a handful of pages is content-level. (On a BU site
+  audited 2026-07, a cluster hit ~3,158/3,158 pages — obviously the theme —
+  while "image missing alt" hit 189 pages — content.)
+- **On a single page (no cross-page signal):** classify by *location* and
+  *issue class*. Inside `<header>/<nav>/<footer>` or global chrome → likely
+  theme; inside `<main>`/the content region → likely content. Skip-link,
+  landmark structure, and nav roles lean theme; alt text, in-content headings,
+  link text, table headers, and form labels lean content.
+
+It's a heuristic, not proof — say so, and when unsure, ask the owner which
+surface the element lives on.
+
+## Two audiences, two reports
+
+Filter the report to its reader; don't just label findings.
+
+- **Content-author report (e.g. a site-launch review).** *Suppress* theme issues
+  (or list them once under "we're handling these — not your action"). The author
+  should see only their handful of fixable, content-owned items, in plain
+  language, each with the concrete edit. Handing an editor thousands of template
+  occurrences they can't touch buries the real work. This report replaces the
+  labor of a reviewer hand-writing "what the content editors did wrong" — the
+  reviewer keeps sign-off; the skill removes the transcription.
+- **Theme/team report.** The recurring template findings, grouped by the shared
+  construct responsible, framed as fix-once-cascades-everywhere. Proposing an
+  actual theme PR from source is a separate, heavier mode (see the plan): theme
+  changes touch every page, so they need the axe delta + a human AT pass + ideally
+  visual-regression before merge.
 
 ## Report template
 
@@ -97,9 +151,11 @@ live in the theme or a Gutenberg block, so one fix clears the issue site-wide.
 
 ## What was and wasn't checked
 <Automated tools catch ~57% of issues by volume. Not covered: keyboard flows,
-screen-reader experience, cognitive load, dynamic states. Recommend a human
-assistive-technology pass (keyboard + screen reader) as acceptance. axe is a
-strong subset of — not a substitute for — a certified/enterprise validator.>
+screen-reader experience, cognitive load, dynamic states. Coverage is WCAG
+2.1-centric — of 2.2 we check only target size (2.5.8); other net-new 2.2
+criteria are not tested. Recommend a human assistive-technology pass (keyboard +
+screen reader) as acceptance. axe is a strong subset of — not a substitute for —
+a certified/enterprise validator.>
 ```
 
 **Add visual cues.** Reports land better with pictures of *where* the problems

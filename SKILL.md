@@ -102,6 +102,15 @@ axe supplies most of this per finding (`help`, `helpUrl`, WCAG tags, the CSS
 selector, and a `failureSummary` of fixes) — use it. Cite criteria
 parenthetically, not as the headline.
 
+**Route findings by who owns the fix.** Separate recurring theme/template issues
+(one fix cascades across every page — owned by the site/theme team) from per-page
+content issues (alt text, in-content headings/links/tables — owned by the content
+author). For a content-author-facing report (e.g. a site-launch review), *suppress*
+the theme issues so the author sees only their handful of fixable items, not
+thousands of template occurrences they can't touch. Routing heuristics (frequency
+oracle + single-page location/issue-class) and the audience-scoped report shapes:
+`references/audit-interpretation.md`.
+
 ### 6. Remediation — advisory only, and honest about it
 HTML has **no analogue to the PDF verifier's pixel-identity proof**: structure
 and presentation are entangled through CSS/JS, so you cannot prove a fix changed
@@ -135,6 +144,12 @@ standalone: run `scripts/axe-run.js` against it and report residuals.
 - Remediation is advisory: no pixel-identity proof exists for HTML.
 - Auditing needs a reachable browser runtime; without one, only authoring
   guidance is available.
+- **Coverage is WCAG 2.1-centric.** axe 4.12.1 is a 2.0/2.1 engine. `axe-run.js`
+  additionally enables `target-size` (SC 2.5.8), the one net-new 2.2 rule axe
+  ships (disabled by default), but the other net-new 2.2 AA criteria — 2.4.11
+  Focus Not Obscured, 2.5.7 Dragging, 3.2.6 Consistent Help, 3.3.7 Redundant
+  Entry, 3.3.8 Accessible Authentication — have no axe rule and are not checked.
+  Never imply 2.2 conformance.
 
 ## Files
 
