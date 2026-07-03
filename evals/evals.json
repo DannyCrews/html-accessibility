@@ -1,0 +1,30 @@
+{
+  "skill_name": "html-accessibility",
+  "comment": "Behavioral evals (skill-creator style). Auditing prompts require a browser runtime (Playwright MCP preferred; AppleScript Chrome fallback). expected_output describes expected SKILL behavior, not just raw axe output. The deterministic rule-id check lives in fixtures/expected.json.",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Someone complained our department page https://www.bu.edu/tech/ is hard to use with a screen reader. Can you check it and tell me what's wrong and how to fix it?",
+      "expected_output": "Detects/uses a browser runtime (does not opine from source); runs axe; reports findings in plain language with WCAG references; treats `incomplete` (especially contrast over images) as a judgment queue, not passes; catches concrete bugs like aria-role-instead-of-role and un-named links; asks whether fixes belong in the CMS theme/template vs page content; recommends a human keyboard/screen-reader pass; never claims conformance.",
+      "target": "https://www.bu.edu/tech/"
+    },
+    {
+      "id": 2,
+      "prompt": "Here's a React component I generated — is it accessible? <component source>",
+      "expected_output": "If renderable, renders it and runs axe; otherwise reviews against the authoring checklist. Prioritizes semantic HTML over ARIA (no ARIA beats bad ARIA); checks accessible names, label association, keyboard operability and visible focus, and color-not-sole-cue; is explicit that it cannot fully verify without a runtime.",
+      "target": "component source"
+    },
+    {
+      "id": 3,
+      "prompt": "Write me an accessible newsletter signup form (email + submit).",
+      "expected_output": "Mode B authoring: programmatically associated <label> (not placeholder-as-label), required indicated in text, error/hint wired via aria-describedby, a real <button>, visible focus, contrast honored. Offers to self-check by running axe if a runtime is available.",
+      "target": "authoring"
+    },
+    {
+      "id": 4,
+      "prompt": "(deterministic) Run the fixture regression check.",
+      "expected_output": "Loads fixtures/fixture-broken.html and runs scripts/axe-run.js; every id in fixtures/expected.json (mustFire.violations + mustFire.bestPractice) appears in violations; incomplete equals expectedIncomplete.",
+      "target": "fixtures/fixture-broken.html"
+    }
+  ]
+}

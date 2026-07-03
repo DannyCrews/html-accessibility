@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<!-- Deterministic eval fixture. Planted issues (expected axe rule ids):
+       html-has-lang        <html> has no lang
+       document-title       no <title>
+       image-alt            <img> with no alt
+       label                text input with no label
+       button-name          icon-only button with no accessible name
+       link-name            empty link
+       color-contrast       faint grey text on white
+       heading-order        h1 -> h4 skip            (best-practice)
+       landmark-one-main    no <main>                (best-practice)
+       region               content outside landmarks (best-practice)
+     The runner injects axe (via scripts/axe-run.js); this file does NOT load it.
+     Colors use rgb() (no '#') so the file also works inline as a data: URL. -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    .faint   { color: rgb(190,190,190); background: rgb(255,255,255); }
+    .iconbtn { border: 0; background: rgb(238,238,238); }
+  </style>
+</head>
+<body>
+  <h1>Quarterly Accessibility Report</h1>
+  <h4>Overview</h4>
+  <p class="faint">Low-contrast grey text on white.</p>
+  <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" width="80" height="80">
+  <p>Search: <input type="text" name="q"></p>
+  <button class="iconbtn"><svg width="16" height="16" aria-hidden="true"><rect width="16" height="16"></rect></svg></button>
+  <p>See our <a href="/policy"></a> for details.</p>
+</body>
+</html>

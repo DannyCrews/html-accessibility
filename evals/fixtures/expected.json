@@ -1,0 +1,17 @@
+{
+  "fixture": "fixtures/fixture-broken.html",
+  "comment": "Deterministic regression check for the axe detection layer. Load the fixture (data: URL or served over http; file:// is blocked in Playwright, but works in the AppleScript Chrome runtime) and run scripts/axe-run.js. PASS = every id in mustFire.violations and mustFire.bestPractice appears in the run's violations, and incomplete matches expectedIncomplete.",
+  "axeVersion": "4.12.1",
+  "runtimesValidated": ["playwright-mcp", "applescript-chrome"],
+  "expectedViolationCount": 10,
+  "mustFire": {
+    "violations": ["button-name", "color-contrast", "document-title", "html-has-lang", "image-alt", "label", "link-name"],
+    "bestPractice": ["heading-order", "landmark-one-main", "region"]
+  },
+  "expectedIncomplete": [],
+  "notes": [
+    "Best-practice ids carry an EMPTY wcag tag array; the report must label them 'best practice', not WCAG AA failures.",
+    "duplicate-id is intentionally NOT expected: axe removed that rule in 4.x.",
+    "The rule set can shift across axe versions. When bumping the pinned version in scripts/axe-run.js, re-run and update this file."
+  ]
+}
