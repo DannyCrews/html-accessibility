@@ -5,8 +5,7 @@ and accessible-by-default author, using [axe-core](https://github.com/dequelabs/
 (the open engine behind Lighthouse and most commercial checkers) driven in a
 **real browser over MCP**. It audits pages and components against WCAG 2.1 AA,
 triages what matters, grounds visual judgments by looking at the rendered page,
-and — because HTML has no pixel-identity proof like PDF does — proposes fixes as
-*advisory* source edits rather than claiming conformance.
+and proposes fixes as *advisory* source edits rather than claiming conformance.
 
 Accessible markup, names, contrast, and structure are what assistive-technology
 users rely on to use a web page. For institutions that publish on the web,
@@ -103,8 +102,7 @@ Auditing needs a browser runtime; the authoring guidance does not.
 ### Claude Cowork (desktop app)
 
 Zip the contents of this skill folder (the directory containing `SKILL.md`) and
-upload via **Customize → Skills → + → Create skill** — or use the bundled
-`../package-skill.sh` to build a `.skill` file and install it directly. Configure
+upload via **Customize → Skills → + → Create skill**. Configure
 a Playwright MCP (or the AppleScript Chrome extension) so Claude can run audits;
 see `references/runtime-setup.md`.
 
@@ -127,12 +125,7 @@ upstream. Eventually this ships alongside `pdf-accessibility` in one
 
 ## Validated on real pages
 
-- **Deterministic fixture** (`evals/fixtures/`): a 10-violation golden set,
-  identical across the Playwright and Chrome runtimes (axe-core 4.12.1).
-- **Live capstone**: a full audit of a BU department homepage surfaced real,
-  concrete bugs (invalid `aria-role`, low-contrast themed buttons, un-named
-  slideshow links) and demonstrated the render-and-look loop end to end,
-  including drafting alt text from a slideshow image opened by its source URL.
+The skill uses a **deterministic fixture** (`evals/fixtures/`) as a set of 10 violations golden set, derived from a sample of real HTML issues. These produce identical results across the Playwright and Chrome runtimes (axe-core 4.12.1).
 
 ## What it cannot do
 
@@ -141,8 +134,7 @@ upstream. Eventually this ships alongside `pdf-accessibility` in one
   assistive-technology testing. The skill recommends it, never replaces it.
 - The `incomplete` set requires judgment — the skill reasons over it rather than
   passing it silently.
-- Remediation is **advisory**: unlike the PDF skill, HTML has no pixel-identity
-  proof, so no fix is claimed as conformance.
+- Remediation is **advisory**: unlike the PDF skill, HTML has no pixel-identity proof, so no fix is claimed as conformance.
 - axe is a strong **subset** of — not a substitute for — a certified / enterprise
   validator when a formal, site-wide conformance claim is required.
 
