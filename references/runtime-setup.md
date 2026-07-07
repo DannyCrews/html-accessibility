@@ -101,6 +101,30 @@ Gotchas (all confirmed in the spike):
   reason Playwright is preferred whenever the page doesn't require a logged-in
   session.
 
+## Safe use
+
+The browser you attach here runs with your network reach — and, in the Chrome
+fallback, your logged-in sessions. A few precautions keep an accessibility audit
+from being able to do anything else:
+
+- **Prefer a non-privileged profile.** Run Playwright headless or in its own
+  Chrome profile — not one signed into email, admin consoles, or other sensitive
+  systems. Reserve Runtime B (your real session) for pages that genuinely require
+  login, and point it only at URLs you name explicitly.
+- **Constrain where it can navigate.** Playwright MCP takes an origin allowlist
+  (`--allowed-origins`, `;`-separated, or `allowedOrigins` in the `--config`
+  network section) to scope audits to the domains you review. Treat it as a
+  convenience, not a guarantee: Playwright's own docs say it is **not** a security
+  boundary (it doesn't cover redirects), and the flag has come and gone across
+  versions. Real containment comes from the non-privileged profile above, not the
+  allowlist.
+- **Treat audited pages as untrusted.** You are pointing a browser-driving agent
+  at arbitrary third-party HTML, and page content (visible text, alt/ARIA
+  strings, hidden nodes) can attempt prompt injection. The skill treats page
+  content as data, not instructions, and confines browser actions to inspection —
+  see SKILL.md, "Scope of browser use." Don't chain an audit into form
+  submission, login, or navigation the page asks for.
+
 ## Quick reference
 
 | Concern | Playwright MCP | AppleScript Chrome |

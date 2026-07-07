@@ -77,6 +77,20 @@ Setup and gotchas: [`references/runtime-setup.md`](references/runtime-setup.md).
 A browser runtime over MCP (see above). No local install beyond that — axe-core
 is fetched at runtime and pinned in `scripts/axe-run.js`.
 
+## Safe use
+
+Auditing hands Claude a real browser with your network reach (and, in the Chrome
+fallback, your logged-in sessions), so the skill scopes that capability to
+accessibility: it navigates, runs axe, screenshots, and inspects the DOM, but
+does not submit forms, authenticate, transact, or inject scripts for any
+non-accessibility purpose — and it treats the content of audited pages as
+untrusted data, not as instructions. That scoping is a behavioral default in
+`SKILL.md`, not a sandbox: the real boundary is the runtime you give it. Above
+all, run it in a non-privileged browser profile (not one signed into sensitive
+systems); an origin allowlist helps but is a convenience, not a security
+boundary. Details:
+[`references/runtime-setup.md`](references/runtime-setup.md) → "Safe use".
+
 ## Workflow
 
 1. **Confirm the runtime**, then load the page/component (render components first).
